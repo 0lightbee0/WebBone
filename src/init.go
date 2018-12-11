@@ -2,8 +2,6 @@ package main
 
 import (
 	"net/http"
-	"path"
-	"path/filepath"
 
 	"github.com/go-chi/chi"
 )
@@ -11,6 +9,9 @@ import (
 func initRouters() http.Handler {
 	rt := chi.NewRouter()
 	rt.Group(func(rt chi.Router) {
+		rt.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+			http.ServeFile(w, r, "index.html")
+		})
 		rt.HandleFunc("/*", func(w http.ResponseWriter, r *http.Request) {
 			// Resources
 			ret := r.URL.Path
@@ -19,19 +20,21 @@ func initRouters() http.Handler {
 				if ret == "" {
 					http.NotFound(w, r)
 				} else {
-					http.ServeFile(w, r, ret)
+					solveResource(w, r, ret)
 				}
-			} else {
-				// Index View
 			}
-		})
-		rt.HandleFunc("/view/*", func(w http.ResponseWriter, r *http.Request) {
-			dir, base := path.Split(r.URL.Path)
-			dir, _ = filepath.Rel("/view", dir)
-			vSrc := cfg.View.get(path.Join(dir, base))
-			http.ServeFile(w, r, path.Join("views", vSrc+".html"))
 		})
 	})
 
 	return rt
+}
+
+func solveResource(w http.ResponseWriter, r *http.Request, path_ string) {
+	// ext := path.Ext(path_)
+	http.ServeFile(w, r, path_)
+	// if ext == ".pkg" {
+	// 	// ...
+	// } else {
+	// 	http.ServeFile(w, r, path_)
+	// }
 }

@@ -16,7 +16,7 @@ type ResType_Cfg struct {
 	Audios  []string `yaml:"Audios"`
 	Videos  []string `yaml:"Videos"`
 	Styles  []string `yaml:"Styles"`
-	Views   []string `yaml:"Views"`
+	Fonts   []string `yaml:"Fonts"`
 	ctn     map[string]string
 }
 
@@ -31,12 +31,12 @@ func (r *ResType_Cfg) trustPath(urlS string) string {
 		/a/b/c/d/	behaviour
 	*/
 	dir, base := path.Split(urlS)
-TrimSpace_Tag:
+TrimSpace_T:
 	dir, base = strings.TrimSpace(dir), strings.TrimSpace(base)
 	if base == "" && dir != "" {
 		// /a/b/c/d/
 		dir, base = path.Split(dir)
-		goto TrimSpace_Tag
+		goto TrimSpace_T
 	}
 	fileSuffix := strings.TrimSpace(path.Ext(base))
 	w := r.ctn[fileSuffix]
@@ -50,23 +50,25 @@ TrimSpace_Tag:
 }
 func (r *ResType_Cfg) cache() {
 	for _, img := range r.Images {
-		r.ctn["."+img] = "images"
+		r.ctn["."+img] = "res/images"
 	}
 	for _, act := range r.Actions {
-		r.ctn["."+act] = "actions"
+		r.ctn["."+act] = "res/actions"
 	}
 	for _, aud := range r.Audios {
-		r.ctn["."+aud] = "audios"
+		r.ctn["."+aud] = "res/audios"
 	}
 	for _, v := range r.Videos {
-		r.ctn["."+v] = "videos"
+		r.ctn["."+v] = "res/videos"
 	}
 	for _, sty := range r.Styles {
-		r.ctn["."+sty] = "styles"
+		r.ctn["."+sty] = "res/styles"
 	}
-	for _, view := range r.Views {
-		r.ctn["."+view] = "views"
+	for _, font := range r.Fonts {
+		r.ctn["."+font] = "res/fonts"
 	}
+	r.ctn[".view"] = "res/views"
+	r.ctn[".pkg"] = "res/package"
 }
 
 type View_Cfg map[string]string
